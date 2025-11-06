@@ -1,5 +1,3 @@
-<!-- redeploy test -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,7 +22,7 @@
     }
     main {
       padding: 20px;
-      max-width: 600px;
+      max-width: 700px;
       margin: 20px auto;
       background: white;
       border-radius: 10px;
@@ -33,15 +31,10 @@
     h2 {
       margin-top: 0;
     }
-    .info {
-      font-size: 16px;
-      line-height: 1.5;
-      margin-bottom: 20px;
-    }
-    .bookings {
+    .section {
       margin-top: 20px;
     }
-    .booking {
+    .item {
       border: 1px solid #ddd;
       padding: 10px;
       border-radius: 8px;
@@ -52,12 +45,19 @@
       background: #dc3545;
       color: white;
       border: none;
-      padding: 10px 14px;
+      padding: 8px 12px;
       border-radius: 6px;
       cursor: pointer;
     }
     button:hover {
       background: #c82333;
+    }
+    .house-img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 6px;
+      margin-bottom: 6px;
     }
   </style>
 </head>
@@ -69,25 +69,29 @@
 
   <main>
     <h2>Welcome, <span id="userName"></span></h2>
-    <div class="info">
-      <b>Phone:</b> <span id="userPhone"></span><br />
+    <div>
+      <b>Phone:</b> <span id="userPhone"></span>
     </div>
 
-    <div class="bookings">
+    <!-- Available Houses -->
+    <div class="section">
+      <h3>Available Houses</h3>
+      <div id="housesList">Loading houses...</div>
+    </div>
+
+    <!-- Your Bookings -->
+    <div class="section">
       <h3>Your Bookings</h3>
-      <div id="bookingsList">Loading...</div>
+      <div id="bookingsList">Loading bookings...</div>
     </div>
   </main>
 
   <script>
-    // ✅ Automatically switch between local and Render backend
-    const API =
-      location.hostname === "localhost"
-        ? "http://localhost:5000/api"
-        : "https://vacanthouse.onrender.com/api";
+    const API = location.hostname === "localhost" 
+      ? "http://localhost:5000/api" 
+      : "https://vacanthouse.onrender.com/api";
 
-    const user = JSON.parse(localStorage.getItem("userData")); // ensure same key used across site
-
+    const user = JSON.parse(localStorage.getItem("userData"));
     if (!user) {
       alert("You need to log in first!");
       window.location.href = "login.html";
@@ -96,6 +100,45 @@
     document.getElementById("userName").textContent = user.name;
     document.getElementById("userPhone").textContent = user.phone;
 
+    // Logout
+    function logout() {
+      localStorage.clear();
+      window.location.href = "login.html";
+    }
+
+    // Load Houses
+    async function loadHouses() {
+      try {
+        const res = await fetch(`${API}/houses`);
+        const houses = await res.json();
+
+        const list = document.getElementById("housesList");
+        list.innerHTML = "";
+
+        if (!houses || houses.length === 0) {
+          list.textContent = "No houses available yet.";
+          return;
+        }
+
+        houses.forEach(h => {
+          const div = document.createElement("div");
+          div.className = "item";
+          div.innerHTML = `
+            ${h.image ? `<img src="${API.replace('/api','')}${h.image}" class="house-img">` : ''}
+            <b>${h.title || "No title"}</b><br>
+            Location: ${h.location || "N/A"}<br>
+            Price: KES ${h.price.toLocaleString()}<br>
+            Status: ${h.isBooked ? "Booked" : "Available"}
+          `;
+          list.appendChild(div);
+        });
+      } catch (err) {
+        console.error("Error loading houses:", err);
+        document.getElementById("housesList").textContent = "Failed to load houses.";
+      }
+    }
+
+    // Load Bookings
     async function loadBookings() {
       try {
         const res = await fetch(`${API}/bookings`);
@@ -109,7 +152,6 @@
           return;
         }
 
-        // Filter bookings for the logged-in user
         const userBookings = data.filter(b => b.customerPhone === user.phone);
 
         if (userBookings.length === 0) {
@@ -119,7 +161,7 @@
 
         userBookings.forEach(b => {
           const div = document.createElement("div");
-          div.className = "booking";
+          div.className = "item";
           div.innerHTML = `
             <b>${b.houseTitle}</b><br>
             Amount: KES ${b.amount}<br>
@@ -130,16 +172,11 @@
         });
       } catch (err) {
         console.error("Error loading bookings:", err);
-        document.getElementById("bookingsList").textContent =
-          "⚠️ Failed to load bookings. Please try again.";
+        document.getElementById("bookingsList").textContent = "Failed to load bookings.";
       }
     }
 
-    function logout() {
-      localStorage.clear();
-      window.location.href = "login.html";
-    }
-
+    loadHouses();
     loadBookings();
   </script>
 </body>
