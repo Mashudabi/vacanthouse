@@ -1,0 +1,84 @@
+{
+  "houses": [
+    {
+      "id": 1,
+      "title": "Bed sitter",
+      "location": "Stage",
+      "price": 4500,
+      "image": "house1.jpg",
+      "description": "A modern home with spacious rooms and parking."
+    },
+    {
+      "id": 2,
+      "title": "Bed sitter",
+      "location": "Stage",
+      "price": 6500,
+      "image": "house2.jpg",
+      "description": "Close to malls and transport, perfect for young professionals."
+    },
+    {
+      "id": 3,
+      "title": "Single",
+      "location": "Stage",
+      "price": 3500,
+      "image": "house3.jpg",
+      "description": "Close to malls and transport, perfect for young professionals."
+    },
+    {
+      "id": 4,
+      "title": "Bed sitter",
+      "location": "Stage",
+      "price": 6500,
+      "image": "house4.jpg",
+      "description": "Close to malls and transport, perfect for young professionals."
+    },
+    {
+      "id": 5,
+      "title": "Bed sitter",
+      "location": "Stage",
+      "price": 5000,
+      "image": "house5.jpg",
+      "description": "Close to malls and transport, perfect for young professionals."
+    },
+    {
+      "id": 6,
+      "title": "Bed sitter",
+      "location": "Stage",
+      "price": 4000,
+      "image": "house6.jpg",
+      "description": "Close to malls and transport, perfect for young professionals."
+    },
+    {
+      "id": 7,
+      "title": "Single",
+      "location": "chebarus",
+      "price": 3500,
+      "image": "house7.jpg",
+      "description": "Close to malls and transport, perfect for young professionals."
+    },
+    {
+      "id": 8,
+      "title": "1 Bedroom Apartment",
+      "location": "chebarus",
+      "price": 8000,
+      "image": "house8.jpg",
+      "description": "Close to malls and transport, perfect for young professionals."
+    },
+    {
+      "id": 9,
+      "title": "Bed sitter",
+      "location": "Kesses",
+      "price": 4000,
+      "image": "house9.jpg",
+      "description": "Close to malls and transport, perfect for young professionals."
+    },
+    {
+      "id": 10,
+      "title": "Bed sitter",
+      "location": "Kesses",
+      "price": 6500,
+      "image": "house10.jpg",
+      "description": "Close to malls and transport, perfect for young professionals."
+    }
+  ]
+}

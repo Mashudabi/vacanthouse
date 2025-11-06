@@ -1,0 +1,20 @@
+[
+  {
+    "id": "booking-001",
+    "houseId": "house-001",
+    "customerName": "John Doe",
+    "customerPhone": "0712345678",
+    "amount": 25257,
+    "status": "approved",
+    "date": "2025-11-06T12:00:00.000Z"
+  },
+  {
+    "id": "booking-002",
+    "houseId": "house-002",
+    "customerName": "Jane Doe",
+    "customerPhone": "0722334455",
+    "amount": 8757,
+    "status": "pending",
+    "date": "2025-11-06T13:30:00.000Z"
+  }
+]

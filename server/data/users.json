@@ -1,0 +1,16 @@
+[
+  {
+    "id": "admin-001",
+    "name": "Admin",
+    "phone": "0700000000",
+    "pass": "admin123",
+    "isAdmin": true
+  },
+  {
+    "id": "client-001",
+    "name": "John Doe",
+    "phone": "0712345678",
+    "pass": "1234",
+    "isAdmin": false
+  }
+]

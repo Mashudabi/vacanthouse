@@ -1,0 +1,18 @@
+[
+  {
+    "id": "house-001",
+    "title": "Modern 2-Bedroom Apartment",
+    "location": "Nairobi, Westlands",
+    "price": 25000,
+    "description": "Spacious apartment with balcony and parking.",
+    "image": "/uploads/sample1.jpg"
+  },
+  {
+    "id": "house-002",
+    "title": "Single Room Bedsitter",
+    "location": "Thika Town",
+    "price": 8500,
+    "description": "Affordable bedsitter close to main road.",
+    "image": "/uploads/sample2.jpg"
+  }
+]

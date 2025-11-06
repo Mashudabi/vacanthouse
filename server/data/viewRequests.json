@@ -1,0 +1,10 @@
+[
+  {
+    "id": "view-001",
+    "houseId": "house-001",
+    "customerName": "Jane Doe",
+    "customerPhone": "0722334455",
+    "status": "pending",
+    "date": "2025-11-06T14:00:00.000Z"
+  }
+]

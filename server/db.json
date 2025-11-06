@@ -1,0 +1,132 @@
+{
+  "users": [
+    {
+      "name": "mashud",
+      "phone": "0702538002",
+      "pass": "1234",
+      "isAdmin": false
+    },
+    {
+      "name": "mashud",
+      "phone": "0700000008",
+      "pass": "3893",
+      "isAdmin": false
+    },
+    {
+      "name": "Admin",
+      "phone": "0724159345",
+      "pass": "38935567",
+      "isAdmin": true
+    },
+    {
+      "id": 1762433291478,
+      "name": "vic",
+      "phone": "0700000000",
+      "pass": "3893",
+      "isAdmin": false
+    }
+  ],
+  "houses": [
+    {
+      "id": 1762368574683,
+      "title": "u",
+      "location": "n",
+      "price": 789,
+      "description": "uy",
+      "image": "/uploads/1762368574675-house3.jpg.jpg",
+      "isBooked": true
+    },
+    {
+      "id": 1762442875123,
+      "title": "single",
+      "location": "stage",
+      "price": 5500,
+      "description": "selfcontained",
+      "image": "/uploads/1762442875111-IMG-20251105-WA0019.jpg",
+      "isBooked": true
+    }
+  ],
+  "bookings": [
+    {
+      "id": 1762430654777,
+      "houseId": 1762345810694,
+      "houseTitle": "chebau",
+      "amount": 4500,
+      "customerName": "mashud",
+      "customerPhone": "0700000008",
+      "status": "approved",
+      "createdAt": "2025-11-06T12:04:14.777Z"
+    },
+    {
+      "id": 1762430676913,
+      "houseId": 1762342836072,
+      "houseTitle": "single",
+      "amount": 4500,
+      "customerName": "mashud",
+      "customerPhone": "0700000008",
+      "status": "approved",
+      "createdAt": "2025-11-06T12:04:36.913Z"
+    },
+    {
+      "id": 1762433332126,
+      "houseId": 1762356613083,
+      "houseTitle": "ty",
+      "amount": 5600,
+      "customerName": "vic",
+      "customerPhone": "0700000000",
+      "status": "approved",
+      "createdAt": "2025-11-06T12:48:52.126Z"
+    },
+    {
+      "id": 1762438282129,
+      "houseId": 1762356613083,
+      "houseTitle": "ty",
+      "amount": 5600,
+      "customerName": "mashud",
+      "customerPhone": "0700000008",
+      "status": "approved",
+      "createdAt": "2025-11-06T14:11:22.129Z"
+    },
+    {
+      "id": 1762440162093,
+      "houseId": 1762358979493,
+      "houseTitle": "Kesses",
+      "amount": 1000,
+      "customerName": "mashud",
+      "customerPhone": "0700000008",
+      "status": "approved",
+      "createdAt": "2025-11-06T14:42:42.093Z"
+    },
+    {
+      "id": 1762440770471,
+      "houseId": 1762368574683,
+      "houseTitle": "u",
+      "amount": 789,
+      "customerName": "mashud",
+      "customerPhone": "0700000008",
+      "status": "approved",
+      "createdAt": "2025-11-06T14:52:50.471Z"
+    },
+    {
+      "id": 1762441526159,
+      "houseId": 1762377346498,
+      "houseTitle": "5",
+      "amount": 789,
+      "customerName": "mashud",
+      "customerPhone": "0700000008",
+      "status": "approved",
+      "createdAt": "2025-11-06T15:05:26.159Z"
+    },
+    {
+      "id": 1762442910588,
+      "houseId": 1762442875123,
+      "houseTitle": "single",
+      "amount": 5500,
+      "customerName": "mashud",
+      "customerPhone": "0700000008",
+      "status": "approved",
+      "createdAt": "2025-11-06T15:28:30.588Z"
+    }
+  ],
+  "viewRequests": []
+}
