@@ -22,42 +22,45 @@
     }
     main {
       padding: 20px;
-      max-width: 700px;
+      max-width: 900px;
       margin: 20px auto;
       background: white;
       border-radius: 10px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
-    h2 {
+    h2, h3 {
       margin-top: 0;
     }
-    .section {
-      margin-top: 20px;
+    .info {
+      font-size: 16px;
+      line-height: 1.5;
+      margin-bottom: 20px;
     }
-    .item {
+    .section {
+      margin-top: 30px;
+    }
+    .house, .booking {
       border: 1px solid #ddd;
       padding: 10px;
       border-radius: 8px;
       margin-bottom: 10px;
       background: #fafafa;
     }
+    .house img {
+      max-width: 100%;
+      border-radius: 6px;
+      margin-top: 8px;
+    }
     button {
       background: #dc3545;
       color: white;
       border: none;
-      padding: 8px 12px;
+      padding: 10px 14px;
       border-radius: 6px;
       cursor: pointer;
     }
     button:hover {
       background: #c82333;
-    }
-    .house-img {
-      width: 100%;
-      height: 180px;
-      object-fit: cover;
-      border-radius: 6px;
-      margin-bottom: 6px;
     }
   </style>
 </head>
@@ -69,17 +72,15 @@
 
   <main>
     <h2>Welcome, <span id="userName"></span></h2>
-    <div>
-      <b>Phone:</b> <span id="userPhone"></span>
+    <div class="info">
+      <b>Phone:</b> <span id="userPhone"></span><br />
     </div>
 
-    <!-- Available Houses -->
     <div class="section">
       <h3>Available Houses</h3>
       <div id="housesList">Loading houses...</div>
     </div>
 
-    <!-- Your Bookings -->
     <div class="section">
       <h3>Your Bookings</h3>
       <div id="bookingsList">Loading bookings...</div>
@@ -87,11 +88,13 @@
   </main>
 
   <script>
-    const API = location.hostname === "localhost" 
-      ? "http://localhost:5000/api" 
-      : "https://vacanthouse.onrender.com/api";
+    const API =
+      location.hostname === "localhost"
+        ? "http://localhost:5000/api"
+        : "https://vacanthouse.onrender.com/api";
 
     const user = JSON.parse(localStorage.getItem("userData"));
+
     if (!user) {
       alert("You need to log in first!");
       window.location.href = "login.html";
@@ -100,13 +103,9 @@
     document.getElementById("userName").textContent = user.name;
     document.getElementById("userPhone").textContent = user.phone;
 
-    // Logout
-    function logout() {
-      localStorage.clear();
-      window.location.href = "login.html";
-    }
-
-    // Load Houses
+    // ----------------------------
+    // Load all houses
+    // ----------------------------
     async function loadHouses() {
       try {
         const res = await fetch(`${API}/houses`);
@@ -115,30 +114,33 @@
         const list = document.getElementById("housesList");
         list.innerHTML = "";
 
-        if (!houses || houses.length === 0) {
+        if (!Array.isArray(houses) || houses.length === 0) {
           list.textContent = "No houses available yet.";
           return;
         }
 
         houses.forEach(h => {
           const div = document.createElement("div");
-          div.className = "item";
+          div.className = "house";
           div.innerHTML = `
-            ${h.image ? `<img src="${API.replace('/api','')}${h.image}" class="house-img">` : ''}
-            <b>${h.title || "No title"}</b><br>
-            Location: ${h.location || "N/A"}<br>
-            Price: KES ${h.price.toLocaleString()}<br>
-            Status: ${h.isBooked ? "Booked" : "Available"}
+            <b>${h.title}</b><br>
+            Location: ${h.location}<br>
+            Price: KES ${h.price}<br>
+            Description: ${h.description}<br>
+            ${h.image ? `<img src="${API.replace('/api','')}${h.image}" alt="${h.title}">` : ''}
           `;
           list.appendChild(div);
         });
       } catch (err) {
         console.error("Error loading houses:", err);
-        document.getElementById("housesList").textContent = "Failed to load houses.";
+        document.getElementById("housesList").textContent =
+          "⚠️ Failed to load houses.";
       }
     }
 
-    // Load Bookings
+    // ----------------------------
+    // Load bookings of this user
+    // ----------------------------
     async function loadBookings() {
       try {
         const res = await fetch(`${API}/bookings`);
@@ -161,7 +163,7 @@
 
         userBookings.forEach(b => {
           const div = document.createElement("div");
-          div.className = "item";
+          div.className = "booking";
           div.innerHTML = `
             <b>${b.houseTitle}</b><br>
             Amount: KES ${b.amount}<br>
@@ -172,8 +174,14 @@
         });
       } catch (err) {
         console.error("Error loading bookings:", err);
-        document.getElementById("bookingsList").textContent = "Failed to load bookings.";
+        document.getElementById("bookingsList").textContent =
+          "⚠️ Failed to load bookings.";
       }
+    }
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = "login.html";
     }
 
     loadHouses();
