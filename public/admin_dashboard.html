@@ -136,11 +136,11 @@
 </div>
 
 <script>
-const API = "http://localhost:5000/api";
+const BASE_URL = "https://vacanthouse-2.onrender.com"; // deployed backend
+const API = BASE_URL + "/api";
 
-// ✅ Load admin details
-const user = JSON.parse(localStorage.getItem("user") || "null");
-const token = localStorage.getItem("token");
+const user = JSON.parse(localStorage.getItem("userData") || "null");
+const token = localStorage.getItem("userToken");
 
 if (!user || !user.isAdmin || !token) {
   alert("Access denied. Admins only.");
@@ -148,13 +148,11 @@ if (!user || !user.isAdmin || !token) {
   window.location = "admin_login.html";
 }
 
-// helper to build image URL safely
 function imageUrl(path) {
   if (!path) return 'https://via.placeholder.com/110x75?text=No+Image';
-  return path.startsWith('http') ? path : `http://localhost:5000${path}`;
+  return path.startsWith('http') ? path : `${BASE_URL}${path}`;
 }
 
-// helper to safely extract id from objects (works whether server uses _id or id)
 function getId(obj) {
   return obj.id || obj._id || obj._id?.['$oid'] || obj.ID || null;
 }
@@ -173,7 +171,7 @@ document.getElementById("addHouseForm").addEventListener("submit", async (e) => 
   try {
     const res = await fetch(`${API}/houses`, {
       method: "POST",
-      headers: { Authorization: "Bearer " + token }, // don't set Content-Type when sending FormData
+      headers: { Authorization: "Bearer " + token },
       body: formData,
     });
     const data = await res.json();
@@ -183,7 +181,6 @@ document.getElementById("addHouseForm").addEventListener("submit", async (e) => 
     loadHouses();
   } catch (err) {
     alert("Failed to add house: " + err.message);
-    console.error(err);
   }
 });
 
@@ -191,7 +188,7 @@ document.getElementById("addHouseForm").addEventListener("submit", async (e) => 
 async function loadHouses() {
   try {
     const res = await fetch(`${API}/houses`, {
-      headers: { Authorization: "Bearer " + token, Accept: 'application/json' }
+      headers: { Authorization: "Bearer " + token }
     });
     const data = await res.json();
     const wrap = document.getElementById("houseList");
@@ -235,7 +232,6 @@ async function deleteHouse(id) {
     loadHouses();
   } catch (err) {
     alert("Failed to delete house: " + err.message);
-    console.error(err);
   }
 }
 
@@ -244,10 +240,9 @@ let currentEditId = null;
 async function openEditModal(id) {
   if (!id) return alert('Invalid id');
   currentEditId = id;
-  // fetch house details and populate modal so user doesn't accidentally overwrite with blanks
   try {
     const res = await fetch(`${API}/houses/${id}`, {
-      headers: { Authorization: "Bearer " + token, Accept: 'application/json' }
+      headers: { Authorization: "Bearer " + token }
     });
     const h = await res.json();
     if (!res.ok) throw new Error(h.message || 'Could not fetch house details');
@@ -256,12 +251,9 @@ async function openEditModal(id) {
     document.getElementById('editLocation').value = h.location || '';
     document.getElementById('editPrice').value = h.price || '';
     document.getElementById('editDesc').value = h.description || '';
-    // note: we don't set the file input for security reasons; user can choose a new image if desired
-
     document.getElementById("editModal").classList.add("active");
   } catch (err) {
     alert('Failed to load house for editing: ' + err.message);
-    console.error(err);
   }
 }
 
@@ -291,7 +283,6 @@ document.getElementById("saveEditBtn").onclick = async () => {
     document.getElementById("editModal").classList.remove("active");
     loadHouses();
   } catch (err) {
-    console.error("Edit failed:", err);
     alert("Failed to update house: " + err.message);
   }
 };
@@ -300,7 +291,7 @@ document.getElementById("saveEditBtn").onclick = async () => {
 async function loadRequests() {
   try {
     const res = await fetch(`${API}/view-requests`, {
-      headers: { Authorization: "Bearer " + token, Accept: 'application/json' }
+      headers: { Authorization: "Bearer " + token }
     });
     const data = await res.json();
     const wrap = document.getElementById("reqList");
@@ -341,7 +332,6 @@ async function approveRequest(id) {
     loadRequests();
   } catch (err) {
     alert("Failed to approve request: " + err.message);
-    console.error(err);
   }
 }
 
@@ -349,7 +339,7 @@ async function approveRequest(id) {
 async function loadBookings() {
   try {
     const res = await fetch(`${API}/bookings`, {
-      headers: { Authorization: "Bearer " + token, Accept: 'application/json' }
+      headers: { Authorization: "Bearer " + token }
     });
     const data = await res.json();
     const wrap = document.getElementById("booksList");
@@ -390,7 +380,6 @@ async function approveBooking(id) {
     loadBookings();
   } catch (err) {
     alert("Failed to approve booking: " + err.message);
-    console.error(err);
   }
 }
 

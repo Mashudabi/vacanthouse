@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -7,7 +7,7 @@
 
 <style>
 :root {
-  --bg: linear-gradient(135deg, #007bff, #00ff88); /* ✅ Blue-green gradient */
+  --bg: linear-gradient(135deg, #007bff, #00ff88);
   --card: #ffffff;
   --primary: #0d6efd;
   --dark: #111;
@@ -23,7 +23,6 @@ body {
   min-height:100vh;
   color:var(--dark);
 }
-
 header {
   background: var(--primary);
   color: white;
@@ -32,22 +31,18 @@ header {
   font-weight: bold;
   display:flex; justify-content:space-between; align-items:center;
 }
-
 .container { padding: 12px; }
-
 .grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 10px;
 }
-
 .card {
   background: var(--card);
   border-radius: 10px;
   padding: 10px;
   box-shadow: 0 2px 8px rgba(0,0,0,.06);
 }
-
 .amount-card {
   padding: 8px;
   background:#fff;
@@ -57,7 +52,6 @@ header {
 }
 .amount-card:hover { border:1px solid var(--primary); }
 .tiny { font-size: 12px; color:var(--tiny); }
-
 button {
   padding:10px;
   border:none;
@@ -67,7 +61,6 @@ button {
   color:white;
   font-size:16px;
 }
-
 input {
   width:100%;
   padding:10px;
@@ -75,11 +68,8 @@ input {
   border:1px solid #ccc;
   border-radius:6px;
 }
-
 .hidden { display:none; }
-
 .profile-box { padding:12px; }
-
 .link {
   color:#0000ff;
   font-size:14px;
@@ -99,7 +89,6 @@ input {
 }
 .house-img { width:100%; height:220px; object-fit:cover; border-radius:8px; }
 .small { font-size:13px }
-
 @media (min-width:800px){
   .grid{grid-template-columns:repeat(3,1fr)}
   .center-card{max-width:420px}
@@ -181,14 +170,20 @@ input {
 </div>
 
 <script>
-const API = "http://localhost:5000/api";
+const BASE_URL = "https://vacanthouse-2.onrender.com"; // deployed backend
+const API = BASE_URL + "/api";
+
 let token = localStorage.getItem("userToken");
 let currentUser = JSON.parse(localStorage.getItem("userData") || "null");
+
+function imageUrl(path) {
+  if (!path) return 'https://via.placeholder.com/220x140?text=No+Image';
+  return path.startsWith('http') ? path : `${BASE_URL}${path}`;
+}
 
 function showSignup(){ loginPage.classList.add('hidden'); signupPage.classList.remove('hidden'); }
 function showLogin(){ signupPage.classList.add('hidden'); loginPage.classList.remove('hidden'); }
 
-// ✅ SIGNUP
 async function signup(){
   const name = suName.value.trim();
   const phone = suPhone.value.trim();
@@ -210,7 +205,6 @@ async function signup(){
   showLogin();
 }
 
-// ✅ LOGIN
 async function login(){
   const phone = loginPhone.value.trim();
   const pass = loginPass.value.trim();
@@ -238,23 +232,26 @@ async function login(){
   showMain();
 }
 
-// ✅ LOGOUT
 function logout(){
   localStorage.clear();
   location.reload();
 }
 
-// ✅ LOAD HOUSES
 async function loadHouses(){
   const res = await fetch(API+"/houses");
   const houses = await res.json();
   housesGrid.innerHTML = "";
 
+  if(!houses || houses.length === 0){
+    housesGrid.innerHTML = "<div>No houses available.</div>";
+    return;
+  }
+
   houses.forEach(h=>{
     const div = document.createElement("div");
     div.className = "amount-card card";
     div.innerHTML = `
-      <img src="http://localhost:5000${h.image}" style="width:100%;height:140px;border-radius:8px;object-fit:cover;">
+      <img src="${imageUrl(h.image)}" style="width:100%;height:140px;border-radius:8px;object-fit:cover;">
       <div style="margin-top:8px;font-weight:700;">KES ${h.price.toLocaleString()}</div>
       <div class="tiny">${h.location}</div>
     `;
@@ -263,11 +260,10 @@ async function loadHouses(){
   });
 }
 
-// ✅ OPEN HOUSE DETAILS
 let selectedHouse = null;
 function openDetails(h){
   selectedHouse = h;
-  detImg.src = "http://localhost:5000"+h.image;
+  detImg.src = imageUrl(h.image);
   detPrice.textContent = `KES ${h.price.toLocaleString()}`;
   detLoc.textContent = h.location;
 
@@ -281,7 +277,6 @@ function openDetails(h){
 
 detailsBack.onclick = ()=>{ detailsPage.classList.add("hidden"); mainPage.classList.remove("hidden"); }
 
-// ✅ PAY / BOOK
 async function proceedPayment(){
   const name = custName.value.trim();
   const phone = custPhone.value.trim();
@@ -309,7 +304,6 @@ async function proceedPayment(){
   showProfile();
 }
 
-// ✅ PROFILE
 profileBtn.onclick = showProfile;
 function showProfile(){
   pfName.textContent = currentUser.name;
@@ -322,10 +316,8 @@ function showProfile(){
   loadBookings();
 }
 
-// ✅ BACK TO DASHBOARD BUTTON
 backArrow.onclick = ()=>{ profilePage.classList.add("hidden"); mainPage.classList.remove("hidden"); };
 
-// ✅ LOAD BOOKINGS (Pending or Approved)
 async function loadBookings(){
   const res = await fetch(API+"/bookings", {
     headers:{ "Authorization":"Bearer " + token }
@@ -355,10 +347,8 @@ async function loadBookings(){
 
 function continueToPay(id){
   alert("Redirecting to payment for booking ID: "+id);
-  // Add payment gateway redirect here
 }
 
-// ✅ Auto session login
 if(token && currentUser){
   if(currentUser.isAdmin){
     window.location = "admin_dashboard.html";

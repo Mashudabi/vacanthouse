@@ -17,8 +17,13 @@ app.use(express.json());
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// 🧩 Public folder (for frontend)
 const publicDir = path.join(__dirname, "../public");
+
+// 🗃️ Local JSON database
 const dbPath = path.join(__dirname, "./db.json");
+
+// 📂 Upload folder
 const uploadDir = path.join(process.cwd(), "uploads");
 
 // ===== Ensure folders exist =====
@@ -132,14 +137,11 @@ app.post("/api/admin/login", (req, res) => {
 // ==========================
 // 🏠 HOUSES ROUTES
 // ==========================
-
-// Get all houses
 app.get("/api/houses", (req, res) => {
   const db = readDB();
   res.json(db.houses);
 });
 
-// Get single house
 app.get("/api/houses/:id", (req, res) => {
   const db = readDB();
   const house = db.houses.find((h) => String(h.id) === req.params.id);
@@ -147,7 +149,6 @@ app.get("/api/houses/:id", (req, res) => {
   res.json(house);
 });
 
-// ✅ Add house
 app.post("/api/houses", upload.single("image"), (req, res) => {
   const { title, location, price, description } = req.body;
   const db = readDB();
@@ -168,7 +169,6 @@ app.post("/api/houses", upload.single("image"), (req, res) => {
   res.json({ success: true, message: "House added successfully", house: newHouse });
 });
 
-// ✅ Edit house
 app.put("/api/houses/:id", upload.single("image"), (req, res) => {
   const db = readDB();
   const houseIndex = db.houses.findIndex((h) => String(h.id) === req.params.id);
@@ -177,7 +177,6 @@ app.put("/api/houses/:id", upload.single("image"), (req, res) => {
 
   const oldHouse = db.houses[houseIndex];
 
-  // Delete old image if replaced
   if (req.file && oldHouse.image) {
     const oldImgPath = path.join(uploadDir, path.basename(oldHouse.image));
     if (fs.existsSync(oldImgPath)) fs.unlinkSync(oldImgPath);
@@ -196,7 +195,6 @@ app.put("/api/houses/:id", upload.single("image"), (req, res) => {
   res.json({ success: true, message: "House updated successfully" });
 });
 
-// ✅ Delete house
 app.delete("/api/houses/:id", (req, res) => {
   const db = readDB();
   const houseIndex = db.houses.findIndex((h) => String(h.id) === req.params.id);
@@ -278,7 +276,7 @@ app.post("/api/book", (req, res) => {
     createdAt: new Date().toISOString(),
   };
 
-  house.isBooked = true; // mark as booked
+  house.isBooked = true;
   db.bookings.push(booking);
   writeDB(db);
 
@@ -300,7 +298,6 @@ app.post("/api/bookings/:id/approve", (req, res) => {
   res.json({ success: true, message: "Booking approved", booking });
 });
 
-// ✅ Payment route
 app.post("/api/payments", (req, res) => {
   const { bookingId, name, phone } = req.body;
   const db = readDB();
@@ -333,22 +330,21 @@ app.post("/api/payments", (req, res) => {
 });
 
 // ==========================
-// ✅ STATIC ROUTES
+// ✅ STATIC ROUTES (Frontend)
 // ==========================
 app.use("/uploads", express.static(uploadDir));
-app.use(express.static(publicDir));
 
-app.get("/", (req, res) => {
-  res.sendFile(path.join(publicDir, "index.html"));
-});
-
-app.get("/admin_login.html", (req, res) => {
-  res.sendFile(path.join(publicDir, "admin_login.html"));
-});
-
-app.get("/admin_dashboard.html", (req, res) => {
-  res.sendFile(path.join(publicDir, "admin_dashboard.html"));
-});
+// serve static frontend safely
+if (fs.existsSync(publicDir)) {
+  app.use(express.static(publicDir));
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(publicDir, "index.html"));
+  });
+} else {
+  app.get("/", (req, res) => {
+    res.json({ message: "Frontend not found. API is running ✅" });
+  });
+}
 
 // ==========================
 // ✅ START SERVER
