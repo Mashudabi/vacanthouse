@@ -1,0 +1,15 @@
+{
+  "users": [
+    {
+      "id": 1762458682216,
+      "name": "Admin",
+      "phone": "0724159345",
+      "pass": "38935567",
+      "isAdmin": true
+    }
+  ],
+  "houses": [],
+  "bookings": [],
+  "viewRequests": [],
+  "payments": []
+}

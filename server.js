@@ -1,4 +1,4 @@
-// server/server.js
+// server.js
 import express from "express";
 import cors from "cors";
 import fs from "fs";
@@ -17,14 +17,10 @@ app.use(express.json());
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// 🧩 Public folder (for frontend)
-const publicDir = path.join(__dirname, "../public");
-
-// 🗃️ Local JSON database
-const dbPath = path.join(__dirname, "./db.json");
-
-// 📂 Upload folder
-const uploadDir = path.join(process.cwd(), "uploads");
+// ✅ public folder is in same directory as server.js
+const publicDir = path.join(__dirname, "public");
+const dbPath = path.join(__dirname, "db.json");
+const uploadDir = path.join(__dirname, "uploads");
 
 // ===== Ensure folders exist =====
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir);
@@ -39,6 +35,31 @@ if (!fs.existsSync(dbPath)) {
   );
   console.log("🗃️ db.json created");
 }
+
+// ===== Admin Auto-Creation =====
+const ensureAdminAccount = () => {
+  const db = JSON.parse(fs.readFileSync(dbPath));
+  const adminPhone = "0724159345";
+  const adminPass = "38935567";
+
+  const existingAdmin = db.users.find(
+    (u) => u.phone === adminPhone && u.isAdmin
+  );
+
+  if (!existingAdmin) {
+    const newAdmin = {
+      id: Date.now(),
+      name: "System Admin",
+      phone: adminPhone,
+      pass: adminPass,
+      isAdmin: true,
+    };
+    db.users.push(newAdmin);
+    fs.writeFileSync(dbPath, JSON.stringify(db, null, 2));
+    console.log("✅ Default admin created:", adminPhone);
+  }
+};
+ensureAdminAccount();
 
 // ===== Multer Upload Config =====
 const storage = multer.diskStorage({
@@ -330,26 +351,29 @@ app.post("/api/payments", (req, res) => {
 });
 
 // ==========================
-// ✅ STATIC ROUTES (Frontend)
+// ✅ STATIC ROUTES
 // ==========================
 app.use("/uploads", express.static(uploadDir));
+app.use(express.static(publicDir));
 
-// serve static frontend safely
-if (fs.existsSync(publicDir)) {
-  app.use(express.static(publicDir));
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(publicDir, "index.html"));
-  });
-} else {
-  app.get("/", (req, res) => {
-    res.json({ message: "Frontend not found. API is running ✅" });
-  });
-}
+app.get("/admin_login.html", (req, res) => {
+  res.sendFile(path.join(publicDir, "admin_login.html"));
+});
+
+app.get("/admin_dashboard.html", (req, res) => {
+  res.sendFile(path.join(publicDir, "admin_dashboard.html"));
+});
+
+// ✅ Catch-all route
+app.get("*", (req, res) => {
+  res.sendFile(path.join(publicDir, "index.html"));
+});
 
 // ==========================
 // ✅ START SERVER
 // ==========================
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () =>
-  console.log(`✅ Server running at: http://localhost:${PORT}`)
-);
+app.listen(PORT, () => {
+  console.log(`✅ Server running at: http://localhost:${PORT}`);
+  console.log("📂 Serving static files from:", publicDir);
+});
