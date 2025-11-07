@@ -163,18 +163,48 @@ input {
 </div>
 
 <script>
+// ====== DOM ELEMENTS ======
+const loginPage = document.getElementById("loginPage");
+const signupPage = document.getElementById("signupPage");
+const mainPage = document.getElementById("mainPage");
+const detailsPage = document.getElementById("detailsPage");
+const profilePage = document.getElementById("profilePage");
+const topHeader = document.getElementById("topHeader");
+const profileBtn = document.getElementById("profileBtn");
+const housesGrid = document.getElementById("housesGrid");
+const detImg = document.getElementById("detImg");
+const detPrice = document.getElementById("detPrice");
+const detLoc = document.getElementById("detLoc");
+const custName = document.getElementById("custName");
+const custPhone = document.getElementById("custPhone");
+const payPhone = document.getElementById("payPhone");
+const detailsBack = document.getElementById("detailsBack");
+const backArrow = document.getElementById("backArrow");
+const pfName = document.getElementById("pfName");
+const pfPhone = document.getElementById("pfPhone");
+const bookingsList = document.getElementById("bookingsList");
+const suName = document.getElementById("suName");
+const suPhone = document.getElementById("suPhone");
+const suPass = document.getElementById("suPass");
+const suPass2 = document.getElementById("suPass2");
+const loginPhone = document.getElementById("loginPhone");
+const loginPass = document.getElementById("loginPass");
+
+// ====== API URL ======
 const API =
   location.hostname === "localhost"
-    ? "http://localhost:5000/api"
-    : "https://vacanthouse.onrender.com/api";
+    ? "http://localhost:10000/api"
+    : "https://vacant-houses-backend-1.onrender.com/api";
 
+// ====== TOKEN & USER ======
 let token = localStorage.getItem("userToken");
 let currentUser = JSON.parse(localStorage.getItem("userData") || "null");
 
+// ====== PAGE SWITCH ======
 function showSignup(){ loginPage.classList.add('hidden'); signupPage.classList.remove('hidden'); }
 function showLogin(){ signupPage.classList.add('hidden'); loginPage.classList.remove('hidden'); }
 
-// ✅ SIGNUP
+// ====== SIGNUP ======
 async function signup(){
   const name = suName.value.trim();
   const phone = suPhone.value.trim();
@@ -194,7 +224,7 @@ async function signup(){
   showLogin();
 }
 
-// ✅ LOGIN
+// ====== LOGIN ======
 async function login(){
   const phone = loginPhone.value.trim();
   const pass = loginPass.value.trim();
@@ -219,10 +249,10 @@ async function login(){
   showMain();
 }
 
-// ✅ LOGOUT
+// ====== LOGOUT ======
 function logout(){ localStorage.clear(); location.reload(); }
 
-// ✅ LOAD HOUSES
+// ====== LOAD HOUSES ======
 async function loadHouses(){
   const res = await fetch(API+"/houses");
   const houses = await res.json();
@@ -241,7 +271,7 @@ async function loadHouses(){
   });
 }
 
-// ✅ OPEN HOUSE DETAILS
+// ====== OPEN HOUSE DETAILS ======
 let selectedHouse = null;
 function openDetails(h){
   selectedHouse = h;
@@ -258,7 +288,7 @@ function openDetails(h){
 }
 detailsBack.onclick = ()=>{ detailsPage.classList.add("hidden"); mainPage.classList.remove("hidden"); }
 
-// ✅ PAY / BOOK
+// ====== PAY / BOOK ======
 async function proceedPayment(){
   const name = custName.value.trim();
   const phone = custPhone.value.trim();
@@ -275,6 +305,7 @@ async function proceedPayment(){
       houseId:selectedHouse.id,
       customerName:name,
       customerPhone:phone,
+      paymentPhone: mpesa,
       amount:selectedHouse.price
     })
   });
@@ -283,7 +314,7 @@ async function proceedPayment(){
   showProfile();
 }
 
-// ✅ PROFILE
+// ====== PROFILE ======
 profileBtn.onclick = showProfile;
 function showProfile(){
   pfName.textContent = currentUser.name;
@@ -294,10 +325,10 @@ function showProfile(){
   loadBookings();
 }
 
-// ✅ BACK TO DASHBOARD
+// ====== BACK TO DASHBOARD ======
 backArrow.onclick = ()=>{ profilePage.classList.add("hidden"); mainPage.classList.remove("hidden"); };
 
-// ✅ LOAD BOOKINGS
+// ====== LOAD BOOKINGS ======
 async function loadBookings(){
   const res = await fetch(API+"/bookings", {
     headers:{ "Authorization":"Bearer " + token }
@@ -323,12 +354,13 @@ async function loadBookings(){
 }
 function continueToPay(id){ alert("Redirecting to payment for booking ID: "+id); }
 
-// ✅ Auto session login
+// ====== AUTO SESSION LOGIN ======
 if(token && currentUser){
   if(currentUser.isAdmin){ window.location = "admin_dashboard.html"; }
   else { showMain(); }
 }
 
+// ====== SHOW MAIN PAGE ======
 async function showMain(){
   loginPage.classList.add("hidden");
   signupPage.classList.add("hidden");
