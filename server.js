@@ -10,14 +10,16 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: process.env.FRONTEND_URL || "*", // Set your Vercel frontend URL here
+  credentials: true
+}));
 app.use(express.json());
 
 // ===== File Paths =====
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// ✅ public folder is in same directory as server.js
 const publicDir = path.join(__dirname, "public");
 const dbPath = path.join(__dirname, "db.json");
 const uploadDir = path.join(__dirname, "uploads");
@@ -73,6 +75,8 @@ const upload = multer({ storage });
 const readDB = () => JSON.parse(fs.readFileSync(dbPath));
 const writeDB = (data) =>
   fs.writeFileSync(dbPath, JSON.stringify(data, null, 2));
+
+const backendURL = process.env.BACKEND_URL || "http://localhost:5000"; // Set Render backend URL in env
 
 // ==========================
 // ✅ USER SIGNUP
@@ -180,7 +184,7 @@ app.post("/api/houses", upload.single("image"), (req, res) => {
     location,
     price: Number(price) || 0,
     description,
-    image: req.file ? "/uploads/" + req.file.filename : null,
+    image: req.file ? `${backendURL}/uploads/${req.file.filename}` : null,
     isBooked: false,
   };
 
@@ -209,7 +213,7 @@ app.put("/api/houses/:id", upload.single("image"), (req, res) => {
     location: req.body.location || oldHouse.location,
     price: req.body.price ? Number(req.body.price) : oldHouse.price,
     description: req.body.description || oldHouse.description,
-    image: req.file ? "/uploads/" + req.file.filename : oldHouse.image,
+    image: req.file ? `${backendURL}/uploads/${req.file.filename}` : oldHouse.image,
   };
 
   writeDB(db);
@@ -374,6 +378,6 @@ app.get("*", (req, res) => {
 // ==========================
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`✅ Server running at: http://localhost:${PORT}`);
+  console.log(`✅ Server running at: ${backendURL}`);
   console.log("📂 Serving static files from:", publicDir);
 });
