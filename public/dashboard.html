@@ -7,9 +7,13 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f5f6fa;
+      background: linear-gradient(135deg, #007bff, #00ff88);
       margin: 0;
       padding: 0;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
     }
     header {
       background: #0d6efd;
@@ -19,6 +23,10 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+    }
+    header span {
+      flex: 1;
+      text-align: center;
     }
     main {
       padding: 20px;
@@ -66,7 +74,8 @@
 </head>
 <body>
   <header>
-    Client Dashboard
+    <button id="profileBtn" style="background:rgba(255,255,255,0.2); color:white; border:1px solid rgba(255,255,255,0.3); padding:8px 15px; border-radius:6px; cursor:pointer; font-size:14px;">👤 Profile</button>
+    <span>Client Dashboard</span>
     <button onclick="logout()">Logout</button>
   </header>
 
@@ -85,13 +94,61 @@
       <h3>Your Bookings</h3>
       <div id="bookingsList">Loading bookings...</div>
     </div>
+
+    <!-- Profile Modal -->
+    <div id="profileModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center;">
+      <div style="background:white; padding:25px; border-radius:10px; max-width:500px; width:90%; max-height:90vh; overflow-y:auto;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+          <h3 style="margin:0;">👤 Profile</h3>
+          <button onclick="document.getElementById('profileModal').style.display='none'" style="background:#dc3545; color:white; padding:6px 12px; border:none; border-radius:6px; cursor:pointer; font-size:16px;">✕</button>
+        </div>
+        
+        <div id="profileSection">
+          <div style="margin-bottom:20px; padding:15px; background:#f8f9fa; border-radius:8px;">
+            <div style="margin-bottom:10px;">
+              <strong>Name:</strong> <span id="profileName"></span>
+            </div>
+            <div>
+              <strong>Phone:</strong> <span id="profilePhone"></span>
+            </div>
+          </div>
+          
+          <div style="margin-bottom:20px;">
+            <strong>Pending Approvals:</strong>
+            <div id="pendingHouses" style="margin-top:10px;">Loading...</div>
+          </div>
+
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button id="helpBtn" style="background:#25D366; color:white; padding:12px 20px; border:none; border-radius:6px; cursor:pointer; flex:1; min-width:150px;">
+              💬 Help (WhatsApp)
+            </button>
+            <button id="supportBtn" style="background:#0d6efd; color:white; padding:12px 20px; border:none; border-radius:6px; cursor:pointer; flex:1; min-width:150px;">
+              📞 Support
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Support Modal -->
+    <div id="supportModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:1001; justify-content:center; align-items:center;">
+      <div style="background:white; padding:20px; border-radius:10px; max-width:400px; width:90%;">
+        <h3 style="margin-top:0;">📞 Support Contacts</h3>
+        <div id="supportNumbers" style="margin:15px 0;">
+          <p>Loading support numbers...</p>
+        </div>
+        <button onclick="document.getElementById('supportModal').style.display='none'" style="background:#dc3545; color:white; padding:8px 15px; border:none; border-radius:6px; cursor:pointer; width:100%;">
+          Close
+        </button>
+      </div>
+    </div>
   </main>
 
   <script>
     const API =
       location.hostname === "localhost"
         ? "http://localhost:5000/api"
-        : "https://vacanthouse.onrender.com/api";
+        : "https://vacant-houses-backend-1.onrender.com/api";
 
     const user = JSON.parse(localStorage.getItem("userData"));
 
@@ -102,6 +159,114 @@
 
     document.getElementById("userName").textContent = user.name;
     document.getElementById("userPhone").textContent = user.phone;
+    
+    // Set profile information
+    document.getElementById("profileName").textContent = user.name;
+    document.getElementById("profilePhone").textContent = user.phone;
+
+    // Profile button click handler
+    document.getElementById("profileBtn").addEventListener("click", () => {
+      document.getElementById("profileModal").style.display = "flex";
+      loadPendingHouses(); // Refresh pending houses when opening profile
+    });
+
+    // Load and apply dashboard background settings
+    async function loadDashboardBackground() {
+      try {
+        const res = await fetch(`${API}/dashboard-background`);
+        const settings = await res.json();
+        
+        if (settings.type === "gradient" && settings.gradient) {
+          document.body.style.background = `linear-gradient(135deg, ${settings.gradient.color1}, ${settings.gradient.color2})`;
+          document.body.style.backgroundImage = "";
+        } else if (settings.type === "image" && settings.image) {
+          document.body.style.background = "";
+          document.body.style.backgroundImage = `url("${settings.image}")`;
+        }
+      } catch (err) {
+        console.error("Error loading background settings:", err);
+        // Keep default background on error
+      }
+    }
+    
+    loadDashboardBackground();
+
+    // ----------------------------
+    // Load pending houses/bookings
+    // ----------------------------
+    async function loadPendingHouses() {
+      try {
+        const bookingsRes = await fetch(`${API}/bookings`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("userToken")}` }
+        });
+        const bookings = await bookingsRes.json();
+        
+        const userPendingBookings = bookings.filter(b => 
+          b.customerPhone === user.phone && 
+          (b.status === "pending" || b.status === "waiting")
+        );
+        
+        const pendingDiv = document.getElementById("pendingHouses");
+        if (userPendingBookings.length === 0) {
+          pendingDiv.innerHTML = "<span style='color:#666;'>No pending approvals</span>";
+        } else {
+          pendingDiv.innerHTML = userPendingBookings.map(b => 
+            `<div style="padding:8px; background:#fff3cd; border-radius:6px; margin:5px 0;">
+              <strong>${b.houseTitle || 'House'}</strong> - KES ${Number(b.amount || 0).toLocaleString()}<br>
+              <small style="color:#856404;">Status: ${b.status}</small>
+            </div>`
+          ).join("");
+        }
+      } catch (err) {
+        console.error("Error loading pending houses:", err);
+        document.getElementById("pendingHouses").innerHTML = "<span style='color:red;'>Failed to load</span>";
+      }
+    }
+
+    // ----------------------------
+    // Help button (WhatsApp)
+    // ----------------------------
+    document.getElementById("helpBtn").addEventListener("click", () => {
+      const whatsappNumber = "254757023627";
+      const message = encodeURIComponent("Hello, I need help with my account.");
+      window.open(`https://wa.me/${whatsappNumber}?text=${message}`, "_blank");
+    });
+
+    // ----------------------------
+    // Support button
+    // ----------------------------
+    document.getElementById("supportBtn").addEventListener("click", async () => {
+      const modal = document.getElementById("supportModal");
+      modal.style.display = "flex";
+      
+      try {
+        const res = await fetch(`${API}/support-numbers`);
+        const supportNumbers = await res.json();
+        
+        const numbersDiv = document.getElementById("supportNumbers");
+        let html = "";
+        
+        if (supportNumbers.phone1) {
+          html += `<p><strong>Support 1:</strong> <a href="tel:${supportNumbers.phone1}" style="color:#0d6efd; text-decoration:none;">${supportNumbers.phone1}</a></p>`;
+        }
+        if (supportNumbers.phone2) {
+          html += `<p><strong>Support 2:</strong> <a href="tel:${supportNumbers.phone2}" style="color:#0d6efd; text-decoration:none;">${supportNumbers.phone2}</a></p>`;
+        }
+        
+        if (!supportNumbers.phone1 && !supportNumbers.phone2) {
+          html = "<p style='color:#666;'>No support numbers available. Please contact admin.</p>";
+        }
+        
+        numbersDiv.innerHTML = html;
+      } catch (err) {
+        console.error("Error loading support numbers:", err);
+        document.getElementById("supportNumbers").innerHTML = "<p style='color:red;'>Failed to load support numbers</p>";
+      }
+    });
+
+    function closeSupportModal() {
+      document.getElementById("supportModal").style.display = "none";
+    }
 
     // ----------------------------
     // Load all houses
@@ -119,15 +284,64 @@
           return;
         }
 
+        // Fetch bookings once to check status for all houses
+        let allBookings = [];
+        try {
+          const bookingsRes = await fetch(`${API}/bookings`, {
+            headers: { Authorization: `Bearer ${localStorage.getItem("userToken")}` }
+          });
+          allBookings = await bookingsRes.json();
+        } catch (err) {
+          console.error("Error loading bookings for house status:", err);
+        }
+
         houses.forEach(h => {
           const div = document.createElement("div");
           div.className = "house";
+          // Handle both Cloudinary URLs and local paths
+          let imageUrl = '';
+          if (h.image) {
+            if (h.image.startsWith('http')) {
+              // Cloudinary URL or full URL
+              imageUrl = h.image;
+            } else {
+              // Local path
+              imageUrl = API.replace('/api','') + h.image;
+            }
+          }
+          // Check if house is unavailable (paid/booked by someone else)
+          const isUnavailable = h.status === "unavailable";
+          
+          // Check if this user has an approved or paid booking for this house
+          const myBooking = allBookings.find(b => 
+            String(b.houseId) === String(h.id) && 
+            b.customerPhone === user.phone && 
+            (b.status === "approved" || b.status === "paid")
+          );
+          const isBookedByMe = !!myBooking;
+          
+          let bookButton = "";
+          if (isBookedByMe) {
+            bookButton = `<div style="background:#28a745; color:white; padding:10px; border-radius:6px; margin-top:8px; text-align:center; font-weight:bold;">
+              ✅ Booked by You
+            </div>`;
+          } else if (isUnavailable) {
+            bookButton = `<div style="background:#dc3545; color:white; padding:10px; border-radius:6px; margin-top:8px; text-align:center; font-weight:bold;">
+              ❌ Unavailable
+            </div>`;
+          } else {
+            bookButton = `<button onclick="bookHouse('${h.id}', '${h.title}', ${h.price})" style="background:#0c7c0c; color:white; padding:10px 15px; border:none; border-radius:6px; cursor:pointer; margin-top:8px; width:100%;">
+              📖 Book This House
+            </button>`;
+          }
+          
           div.innerHTML = `
             <b>${h.title}</b><br>
             Location: ${h.location}<br>
             Price: KES ${h.price}<br>
             Description: ${h.description}<br>
-            ${h.image ? `<img src="${API.replace('/api','')}${h.image}" alt="${h.title}">` : ''}
+            ${imageUrl ? `<img src="${imageUrl}" alt="${h.title}" style="max-width:100%; border-radius:6px; margin-top:8px;">` : ''}
+            ${bookButton}
           `;
           list.appendChild(div);
         });
@@ -164,11 +378,43 @@
         userBookings.forEach(b => {
           const div = document.createElement("div");
           div.className = "booking";
+          const isApproved = b.status === "approved";
+          const isPaid = b.status === "paid" || b.paymentStatus === "completed";
+          const serviceFee = 234;
+          const totalAmount = (Number(b.amount) || 0) + serviceFee;
+          
+          let statusColor = "orange";
+          let statusText = b.status;
+          if (isPaid) {
+            statusColor = "green";
+            statusText = "Paid - Booked";
+          } else if (isApproved) {
+            statusColor = "green";
+            statusText = "Approved";
+          } else if (b.status === "waiting") {
+            statusColor = "orange";
+            statusText = "Waiting for Approval";
+          }
+          
+          let actionButton = "";
+          if (isApproved && !isPaid) {
+            actionButton = `<button onclick="proceedToPay('${b.id}', '${b.houseId}', ${totalAmount}, '${b.houseTitle}')" style="background:#0c7c0c; color:white; padding:10px 15px; border:none; border-radius:6px; cursor:pointer; margin-top:8px; width:100%;">
+              💳 Proceed to Pay (KES ${totalAmount.toLocaleString()})
+            </button>`;
+          } else if (isPaid) {
+            actionButton = `<div style="background:#28a745; color:white; padding:10px; border-radius:6px; margin-top:8px; text-align:center; font-weight:bold;">
+              ✅ Payment Completed - House Booked
+            </div>`;
+          }
+          
           div.innerHTML = `
             <b>${b.houseTitle}</b><br>
-            Amount: KES ${b.amount}<br>
-            Status: ${b.status}<br>
-            Date: ${new Date(b.createdAt).toLocaleString()}
+            Rent: KES ${Number(b.amount || 0).toLocaleString()}<br>
+            ${isApproved && !isPaid ? `<span style="color:green; font-weight:bold;">Service Fee: KES ${serviceFee.toLocaleString()}</span><br>` : ''}
+            ${isApproved && !isPaid ? `<span style="color:green; font-weight:bold;">Total: KES ${totalAmount.toLocaleString()}</span><br>` : ''}
+            Status: <span style="color:${statusColor}; font-weight:bold;">${statusText}</span><br>
+            Date: ${new Date(b.createdAt || Date.now()).toLocaleString()}
+            ${actionButton}
           `;
           list.appendChild(div);
         });
@@ -179,6 +425,110 @@
       }
     }
 
+    // ----------------------------
+    // Book House
+    // ----------------------------
+    async function bookHouse(houseId, houseTitle, housePrice) {
+      if (!confirm(`Do you want to book "${houseTitle}" for KES ${Number(housePrice).toLocaleString()}?\n\nThis will send a booking request to the admin for approval.`)) {
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API}/book`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("userToken")}`
+          },
+          body: JSON.stringify({
+            houseId: houseId,
+            customerName: user.name,
+            customerPhone: user.phone,
+            amount: housePrice
+          })
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          alert("✅ Booking request submitted successfully!\n\nYour request is now waiting for admin approval. You'll be notified once it's approved.");
+          // Refresh houses and bookings
+          loadHouses();
+          loadBookings();
+          loadPendingHouses();
+        } else {
+          alert("❌ Booking failed: " + (data.message || "Unknown error"));
+        }
+      } catch (err) {
+        console.error("Booking error:", err);
+        alert("❌ Error submitting booking: " + err.message);
+      }
+    }
+
+    // ----------------------------
+    // Proceed to Pay (M-Pesa)
+    // ----------------------------
+    async function proceedToPay(bookingId, houseId, totalAmount, houseTitle) {
+      const payPhone = prompt(`Enter your M-Pesa phone number to pay KES ${totalAmount.toLocaleString()} for ${houseTitle}:\n\n(e.g. 0712345678)`);
+      
+      if (!payPhone || !payPhone.trim()) {
+        return;
+      }
+
+      const phone = payPhone.trim().replace(/^0/, "254"); // Convert to international format
+      
+      if (!confirm(`You will receive an M-Pesa prompt to pay KES ${totalAmount.toLocaleString()} to Till Number 4128782.\n\nProceed?`)) {
+        return;
+      }
+
+      try {
+        // Show loading message
+        const loadingMsg = document.createElement("div");
+        loadingMsg.id = "paymentLoading";
+        loadingMsg.style.cssText = "position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:20px; border-radius:10px; box-shadow:0 4px 20px rgba(0,0,0,0.3); z-index:2000; text-align:center;";
+        loadingMsg.innerHTML = `
+          <h3>Processing Payment...</h3>
+          <p>Please check your phone for M-Pesa prompt</p>
+          <p style="color:#666; font-size:14px;">Till Number: 4128782</p>
+          <p style="color:#666; font-size:14px;">Amount: KES ${totalAmount.toLocaleString()}</p>
+        `;
+        document.body.appendChild(loadingMsg);
+
+        const res = await fetch(`${API}/mpesa/pay`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("userToken")}`
+          },
+          body: JSON.stringify({
+            bookingId,
+            houseId,
+            phoneNumber: phone,
+            amount: totalAmount,
+            houseTitle
+          })
+        });
+
+        const data = await res.json();
+        document.body.removeChild(loadingMsg);
+
+        if (data.success) {
+          alert(`✅ Payment initiated successfully!\n\nPlease check your phone (${payPhone}) and enter your M-Pesa PIN when prompted.\n\nTill Number: 4128782\nAmount: KES ${totalAmount.toLocaleString()}\n\nAfter payment, the house will be marked as unavailable.`);
+          // Refresh bookings and houses to show updated status
+          loadBookings();
+          loadHouses();
+          loadPendingHouses();
+        } else {
+          alert("❌ Payment failed: " + (data.message || "Unknown error"));
+        }
+      } catch (err) {
+        const loadingMsg = document.getElementById("paymentLoading");
+        if (loadingMsg) document.body.removeChild(loadingMsg);
+        console.error("Payment error:", err);
+        alert("❌ Error initiating payment: " + err.message);
+      }
+    }
+
     function logout() {
       localStorage.clear();
       window.location.href = "login.html";
@@ -186,6 +536,7 @@
 
     loadHouses();
     loadBookings();
+    loadPendingHouses();
   </script>
 </body>
 </html>

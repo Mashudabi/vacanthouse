@@ -40,7 +40,7 @@ document.getElementById("loginForm").addEventListener("submit", async function (
     if (data.user.isAdmin === true) {
       window.location.href = "admin_dashboard.html";
     } else {
-      window.location.href = "index.html";
+      window.location.href = "dashboard.html";
     }
 
   } catch (error) {

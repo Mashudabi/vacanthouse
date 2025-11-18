@@ -190,11 +190,8 @@ const suPass2 = document.getElementById("suPass2");
 const loginPhone = document.getElementById("loginPhone");
 const loginPass = document.getElementById("loginPass");
 
-// ====== ✅ API URL (kept intact, fixed backend link) ======
-const API =
-  location.hostname === "localhost"
-    ? "http://localhost:10000/api"
-    : "https://vacant-houses-backend-1.onrender.com/api";
+// ====== API URL ======
+const API = "https://vacant-houses-backend-1.onrender.com/api";
 
 // ====== TOKEN & USER ======
 let token = localStorage.getItem("userToken");
@@ -246,7 +243,8 @@ async function login(){
   }
   token = data.token;
   currentUser = data.user;
-  showMain();
+  // Redirect clients to dashboard instead of showing main page
+  window.location.href = "dashboard.html";
 }
 
 // ====== LOGOUT ======
@@ -261,8 +259,14 @@ async function loadHouses(){
   houses.forEach(h=>{
     const div = document.createElement("div");
     div.className = "amount-card card";
+    // Handle both Cloudinary URLs and local paths
+    let imageUrl = h.image || '';
+    if (imageUrl && !imageUrl.startsWith('http')) {
+      // Local path - prepend base URL
+      imageUrl = API.replace('/api','') + imageUrl;
+    }
     div.innerHTML = `
-      <img src="${h.image}" style="width:100%;height:140px;border-radius:8px;object-fit:cover;">
+      ${imageUrl ? `<img src="${imageUrl}" style="width:100%;height:140px;border-radius:8px;object-fit:cover;" onerror="this.style.display='none'">` : '<div style="width:100%;height:140px;background:#eee;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#999;">No Image</div>'}
       <div style="margin-top:8px;font-weight:700;">KES ${h.price.toLocaleString()}</div>
       <div class="tiny">${h.location}</div>
     `;
@@ -275,7 +279,14 @@ async function loadHouses(){
 let selectedHouse = null;
 function openDetails(h){
   selectedHouse = h;
-  detImg.src = h.image;
+  // Handle both Cloudinary URLs and local paths
+  let imageUrl = h.image || '';
+  if (imageUrl && !imageUrl.startsWith('http')) {
+    // Local path - prepend base URL
+    imageUrl = API.replace('/api','') + imageUrl;
+  }
+  detImg.src = imageUrl || '';
+  detImg.onerror = function() { this.style.display = 'none'; };
   detPrice.textContent = `KES ${h.price.toLocaleString()}`;
   detLoc.textContent = h.location;
 
@@ -357,7 +368,7 @@ function continueToPay(id){ alert("Redirecting to payment for booking ID: "+id);
 // ====== AUTO SESSION LOGIN ======
 if(token && currentUser){
   if(currentUser.isAdmin){ window.location = "admin_dashboard.html"; }
-  else { showMain(); }
+  else { window.location.href = "dashboard.html"; }
 }
 
 // ====== SHOW MAIN PAGE ======

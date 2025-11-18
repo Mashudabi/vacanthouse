@@ -85,9 +85,15 @@ function renderHouses(houses) {
     const el = document.createElement("div");
     el.className = "amount-card";
 
+    // Handle both Cloudinary URLs and local paths
+    let imageUrl = h.image || '';
+    if (imageUrl && !imageUrl.startsWith('http')) {
+      // Local path - prepend base URL
+      imageUrl = "http://localhost:5000" + imageUrl;
+    }
+
     el.innerHTML = `
-      <img src="http://localhost:5000${h.image}"
-        style="width:100%; height:120px; border-radius:8px; object-fit:cover;">
+      ${imageUrl ? `<img src="${imageUrl}" style="width:100%; height:120px; border-radius:8px; object-fit:cover;" onerror="this.style.display='none'">` : '<div style="width:100%;height:120px;background:#eee;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#999;">No Image</div>'}
       <div style="margin-top:6px; font-weight:700;">KES ${Number(h.price).toLocaleString()}</div>
       <div class="tiny">${h.location}</div>
       <div class="tiny">${h.title}</div>

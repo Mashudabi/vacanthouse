@@ -107,8 +107,38 @@
           return;
         }
 
-        alert("✅ Account created successfully! You can now log in.");
-        window.location.href = "login.html";
+        // ✅ Auto-login after successful signup
+        try {
+          const loginRes = await fetch(API + "/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ phone, pass })
+          });
+
+          const loginData = await loginRes.json();
+
+          if (loginRes.ok && loginData.success) {
+            // ✅ Save user session
+            localStorage.setItem("userToken", loginData.token);
+            localStorage.setItem("userData", JSON.stringify(loginData.user));
+
+            alert("✅ Account created and logged in successfully!");
+
+            // ✅ Redirect based on role
+            if (loginData.user.isAdmin === true) {
+              window.location.href = "admin_dashboard.html"; // admin page
+            } else {
+              window.location.href = "dashboard.html"; // client dashboard
+            }
+          } else {
+            alert("✅ Account created successfully! Please log in.");
+            window.location.href = "login.html";
+          }
+        } catch (loginErr) {
+          console.error("Auto-login error:", loginErr);
+          alert("✅ Account created successfully! Please log in.");
+          window.location.href = "login.html";
+        }
       } catch (err) {
         console.error("Signup error:", err);
         alert("⚠️ Unable to connect to server. Please check your connection.");

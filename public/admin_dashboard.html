@@ -7,74 +7,33 @@
 <link rel="stylesheet" href="style.css">
 
 <style>
-  body { background:#f4f6f8; font-family:Arial, sans-serif; }
-
-  .admin-wrap {
-    padding:20px; max-width:1100px; margin:auto;
-  }
-
-  .top-bar {
-    display:flex; justify-content:space-between; align-items:center;
-    margin-bottom:18px;
-  }
-
-  .top-bar a { font-size:15px; text-decoration:none; }
-
-  .section-box {
-    background:#fff; padding:18px; border-radius:10px;
-    margin-bottom:25px; box-shadow:0 3px 10px rgba(0,0,0,0.08);
-  }
-
-  .list-item {
-    border-bottom:1px solid #eee; padding:12px 0;
-    display:flex; justify-content:space-between; align-items:center;
-  }
-
+  body { background:#001f3f; font-family:Arial, sans-serif; color:#fff; }
+  .admin-wrap { padding:20px; max-width:1100px; margin:auto; }
+  .top-bar { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; color:#fff; }
+  .top-bar h2 { color:#fff; }
+  .top-bar a { font-size:15px; text-decoration:none; color:#fff; }
+  .section-box { background:#003366; padding:18px; border-radius:10px; margin-bottom:25px; box-shadow:0 3px 10px rgba(0,0,0,0.3); color:#fff; }
+  .section-box h3 { color:#fff; }
+  .section-box label { color:#fff; }
+  .list-item { border-bottom:1px solid #eee; padding:12px 0; display:flex; justify-content:space-between; align-items:center; }
   .list-item:last-child { border-bottom:none; }
-
-  .btn-small {
-    padding:6px 12px; border-radius:6px; font-size:14px; cursor:pointer;
-    border:none; transition:0.2s;
-  }
-
+  .btn-small { padding:6px 12px; border-radius:6px; font-size:14px; cursor:pointer; border:none; transition:0.2s; }
   .btn-small:hover { opacity:0.8; }
-
   .danger { background:#c62828; color:#fff; }
   .green { background:#00a14b; color:#fff; }
   .blue { background:#1565c0; color:#fff; }
-
-  img.house-thumb {
-    width:110px; height:75px; object-fit:cover; border-radius:6px;
-    margin-right:10px;
-  }
-
+  img.house-thumb { width:110px; height:75px; object-fit:cover; border-radius:6px; margin-right:10px; }
   .flex { display:flex; align-items:center; gap:12px; }
-
-  .status-tag {
-    padding:3px 7px; background:#ececec; border-radius:6px;
-    font-size:12px;
-  }
-
-  @media(max-width:600px){
-    .list-item { flex-direction:column; align-items:flex-start; }
-    img.house-thumb { width:100%; height:150px; }
-  }
+  .status-tag { padding:3px 7px; background:#ececec; border-radius:6px; font-size:12px; }
+  @media(max-width:600px){ .list-item { flex-direction:column; align-items:flex-start; } img.house-thumb { width:100%; height:150px; } }
 
   /* Modal */
-  .modal {
-    position:fixed; top:0; left:0; right:0; bottom:0;
-    background:rgba(0,0,0,0.5);
-    display:flex; justify-content:center; align-items:center;
-    visibility:hidden; opacity:0; transition:0.3s;
-  }
+  .modal { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); display:flex; justify-content:center; align-items:center; visibility:hidden; opacity:0; transition:0.3s; }
   .modal.active { visibility:visible; opacity:1; }
-  .modal-content {
-    background:white; padding:20px; border-radius:8px;
-    width:90%; max-width:450px;
-  }
-  .modal-content input, .modal-content textarea {
-    width:100%; margin-bottom:10px; padding:8px; border:1px solid #ddd; border-radius:5px;
-  }
+  .modal-content { background:#003366; padding:20px; border-radius:8px; width:90%; max-width:450px; color:#fff; }
+  .modal-content h3 { color:#fff; }
+  .modal-content input, .modal-content textarea { width:100%; margin-bottom:10px; padding:8px; border:1px solid #555; border-radius:5px; background:#001f3f; color:#fff; }
+  .modal-content input::placeholder, .modal-content textarea::placeholder { color:#aaa; }
 </style>
 </head>
 
@@ -86,6 +45,63 @@
     <div>
       <a href="#" id="logoutBtn">🚪 Logout</a>
     </div>
+  </div>
+
+  <!-- ADD ADMIN -->
+  <div class="section-box">
+    <h3>👤 Add New Admin</h3>
+    <form id="addAdminForm">
+      <input type="text" id="adminName" placeholder="Admin Full Name" required style="background:#001f3f; color:#fff; border:1px solid #555;">
+      <input type="text" id="adminPhone" placeholder="Phone Number (e.g. 0712345678)" required style="background:#001f3f; color:#fff; border:1px solid #555;">
+      <input type="password" id="adminPassword" placeholder="Password" required style="background:#001f3f; color:#fff; border:1px solid #555;">
+      <input type="password" id="adminPasswordConfirm" placeholder="Confirm Password" required style="background:#001f3f; color:#fff; border:1px solid #555;">
+      <button type="submit" class="btn-small green" style="width:100%; margin-top:10px;">➕ Create Admin Account</button>
+    </form>
+  </div>
+
+  <!-- SUPPORT PHONE NUMBERS -->
+  <div class="section-box">
+    <h3>📞 Support Phone Numbers</h3>
+    <div style="margin-bottom:15px;">
+      <label style="display:block; margin-bottom:5px;">Support Phone 1:</label>
+      <input type="text" id="supportPhone1" placeholder="e.g. 254712345678" style="width:100%; padding:8px; background:#001f3f; color:#fff; border:1px solid #555; border-radius:5px;">
+    </div>
+    <div style="margin-bottom:15px;">
+      <label style="display:block; margin-bottom:5px;">Support Phone 2:</label>
+      <input type="text" id="supportPhone2" placeholder="e.g. 254712345679" style="width:100%; padding:8px; background:#001f3f; color:#fff; border:1px solid #555; border-radius:5px;">
+    </div>
+    <button id="saveSupportBtn" class="btn-small blue" style="width:100%;">💾 Save Support Numbers</button>
+  </div>
+
+  <!-- DASHBOARD BACKGROUND SETTINGS -->
+  <div class="section-box">
+    <h3>🎨 Client Dashboard Background</h3>
+    <div style="margin-bottom:15px;">
+      <label style="display:block; margin-bottom:8px;">Background Type:</label>
+      <select id="bgType" style="width:100%; padding:8px; margin-bottom:10px;">
+        <option value="gradient">Gradient Colors</option>
+        <option value="image">Image/GIF</option>
+      </select>
+    </div>
+    
+    <div id="gradientSettings" style="margin-bottom:15px;">
+      <label style="display:block; margin-bottom:5px;">Color 1:</label>
+      <input type="color" id="gradientColor1" value="#f5f6fa" style="width:100%; height:40px; margin-bottom:10px;">
+      <label style="display:block; margin-bottom:5px;">Color 2:</label>
+      <input type="color" id="gradientColor2" value="#ffffff" style="width:100%; height:40px; margin-bottom:10px;">
+    </div>
+    
+    <div id="imageSettings" style="display:none; margin-bottom:15px;">
+      <label style="display:block; margin-bottom:5px;">Upload Background Image/GIF:</label>
+      <input type="file" id="bgImageFile" accept="image/*" style="width:100%; padding:8px; margin-bottom:10px;">
+      <div id="bgImagePreview" style="margin-top:10px;"></div>
+      <div style="margin-top:10px;">
+        <label style="display:block; margin-bottom:5px;">Or Enter Image URL:</label>
+        <input type="text" id="bgImageUrl" placeholder="https://example.com/image.gif" style="width:100%; padding:8px;">
+      </div>
+    </div>
+    
+    <button id="saveBgBtn" class="btn-small blue" style="width:100%;">💾 Save Background Settings</button>
   </div>
 
   <!-- ADD HOUSE -->
@@ -136,9 +152,17 @@
 </div>
 
 <script>
-const BASE_URL = "https://vacanthouse-2.onrender.com"; // deployed backend
+// ✅ Automatically detect backend (local or Render)
+const BASE_URL = location.hostname === "localhost"
+  ? "http://localhost:5000"
+  : "https://vacant-houses-backend-1.onrender.com";
 const API = BASE_URL + "/api";
 
+// Cloudinary config
+const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dxc7la2j8/image/upload";
+const CLOUDINARY_UPLOAD_PRESET = "YuZRVuRnJbfeouz2TPU5lRCGiKE";
+
+// Auth check
 const user = JSON.parse(localStorage.getItem("userData") || "null");
 const token = localStorage.getItem("userToken");
 
@@ -153,46 +177,52 @@ function imageUrl(path) {
   return path.startsWith('http') ? path : `${BASE_URL}${path}`;
 }
 
-function getId(obj) {
-  return obj.id || obj._id || obj._id?.['$oid'] || obj.ID || null;
+function getId(obj) { return obj.id || obj._id || obj._id?.['$oid'] || obj.ID || null; }
+
+// Upload image to Cloudinary
+async function uploadToCloudinary(file) {
+  if (!file) return null;
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+  const res = await fetch(CLOUDINARY_URL, { method: "POST", body: formData });
+  const data = await res.json();
+  return data.secure_url;
 }
 
-// --- ADD NEW HOUSE ---
+// --- ADD HOUSE ---
 document.getElementById("addHouseForm").addEventListener("submit", async (e) => {
   e.preventDefault();
-  const formData = new FormData();
-  formData.append("title", document.getElementById("title").value);
-  formData.append("location", document.getElementById("location").value);
-  formData.append("price", document.getElementById("price").value);
-  formData.append("description", document.getElementById("description").value);
-  const image = document.getElementById("image").files[0];
-  if (image) formData.append("image", image);
+  const title = document.getElementById("title").value;
+  const location = document.getElementById("location").value;
+  const price = document.getElementById("price").value;
+  const description = document.getElementById("description").value;
+  const imageFile = document.getElementById("image").files[0];
 
   try {
+    const cloudUrl = await uploadToCloudinary(imageFile);
+
     const res = await fetch(`${API}/houses`, {
       method: "POST",
-      headers: { Authorization: "Bearer " + token },
-      body: formData,
+      headers: { Authorization: "Bearer " + token, "Content-Type": "application/json" },
+      body: JSON.stringify({ title, location, price, description, image: cloudUrl })
     });
     const data = await res.json();
-    if (!res.ok) throw new Error(data.message || 'Failed to add house');
-    alert(data.message || 'House added');
+    if (!data.success) throw new Error(data.message || "Failed to add house");
+    alert("✅ House added successfully!");
     document.getElementById("addHouseForm").reset();
     loadHouses();
   } catch (err) {
-    alert("Failed to add house: " + err.message);
+    alert("❌ Error adding house: " + err.message);
   }
 });
 
 // --- LOAD HOUSES ---
 async function loadHouses() {
   try {
-    const res = await fetch(`${API}/houses`, {
-      headers: { Authorization: "Bearer " + token }
-    });
+    const res = await fetch(`${API}/houses`, { headers: { Authorization: "Bearer " + token } });
     const data = await res.json();
     const wrap = document.getElementById("houseList");
-
     if (!Array.isArray(data) || !data.length) return wrap.innerHTML = "No houses yet.";
 
     wrap.innerHTML = data.map(h => {
@@ -201,16 +231,15 @@ async function loadHouses() {
       <div class="list-item">
         <div class="flex">
           <img src="${imageUrl(h.image)}" class="house-thumb">
-          <div>
-            <b>${h.title}</b><br>${h.location} — <b>KES ${Number(h.price).toLocaleString()}</b>
-          </div>
+          <div><b>${h.title}</b><br>${h.location} — <b>KES ${Number(h.price).toLocaleString()}</b></div>
         </div>
         <div>
           <button class="btn-small blue" onclick="openEditModal('${id}')">Edit</button>
           <button class="btn-small danger" onclick="deleteHouse('${id}')">Delete</button>
         </div>
       </div>
-    `}).join("");
+      `;
+    }).join("");
   } catch (err) {
     console.error("Error loading houses:", err);
     document.getElementById("houseList").innerHTML = "Failed to load houses.";
@@ -220,18 +249,25 @@ async function loadHouses() {
 // --- DELETE HOUSE ---
 async function deleteHouse(id) {
   if (!id) return alert('Invalid house id');
-  if (!confirm("Delete this house permanently?")) return;
+  if (!confirm("⚠️ Are you sure you want to delete this house permanently? This action cannot be undone.")) return;
   try {
-    const res = await fetch(`${API}/houses/${id}`, {
-      method: "DELETE",
-      headers: { Authorization: "Bearer " + token }
+    const res = await fetch(`${API}/houses/${id}`, { 
+      method: "DELETE", 
+      headers: { Authorization: "Bearer " + token } 
     });
+    
+    if (!res.ok) {
+      const errorText = await res.text();
+      console.error("Delete error:", errorText);
+      throw new Error('Delete failed');
+    }
+    
     const data = await res.json().catch(()=>({}));
-    if (!res.ok) throw new Error(data.message || 'Delete failed');
-    alert(data.message || 'House deleted');
+    alert("✅ House deleted successfully");
     loadHouses();
   } catch (err) {
-    alert("Failed to delete house: " + err.message);
+    console.error("Delete house error:", err);
+    alert("❌ Failed to delete house: " + err.message);
   }
 }
 
@@ -241,9 +277,7 @@ async function openEditModal(id) {
   if (!id) return alert('Invalid id');
   currentEditId = id;
   try {
-    const res = await fetch(`${API}/houses/${id}`, {
-      headers: { Authorization: "Bearer " + token }
-    });
+    const res = await fetch(`${API}/houses/${id}`, { headers: { Authorization: "Bearer " + token } });
     const h = await res.json();
     if (!res.ok) throw new Error(h.message || 'Could not fetch house details');
 
@@ -257,29 +291,27 @@ async function openEditModal(id) {
   }
 }
 
-document.getElementById("cancelEditBtn").onclick = () => {
-  document.getElementById("editModal").classList.remove("active");
-};
+document.getElementById("cancelEditBtn").onclick = () => { document.getElementById("editModal").classList.remove("active"); };
 
 document.getElementById("saveEditBtn").onclick = async () => {
   if (!currentEditId) return alert('No house selected');
-  const formData = new FormData();
-  formData.append("title", document.getElementById("editTitle").value);
-  formData.append("location", document.getElementById("editLocation").value);
-  formData.append("price", document.getElementById("editPrice").value);
-  formData.append("description", document.getElementById("editDesc").value);
-  const image = document.getElementById("editImage").files[0];
-  if (image) formData.append("image", image);
+  const title = document.getElementById("editTitle").value;
+  const location = document.getElementById("editLocation").value;
+  const price = document.getElementById("editPrice").value;
+  const description = document.getElementById("editDesc").value;
+  const imageFile = document.getElementById("editImage").files[0];
 
   try {
+    const cloudUrl = imageFile ? await uploadToCloudinary(imageFile) : null;
+
     const res = await fetch(`${API}/houses/${currentEditId}`, {
       method: "PUT",
-      headers: { Authorization: "Bearer " + token },
-      body: formData
+      headers: { Authorization: "Bearer " + token, "Content-Type": "application/json" },
+      body: JSON.stringify({ title, location, price, description, image: cloudUrl })
     });
     const data = await res.json();
-    if (!res.ok) throw new Error(data.message || 'Update failed');
-    alert(data.message || 'House updated');
+    if (!data.success) throw new Error(data.message || 'Update failed');
+    alert("✅ House updated successfully!");
     document.getElementById("editModal").classList.remove("active");
     loadHouses();
   } catch (err) {
@@ -287,113 +319,336 @@ document.getElementById("saveEditBtn").onclick = async () => {
   }
 };
 
-// --- LOAD VIEW REQUESTS ---
+// --- VIEW REQUESTS ---
 async function loadRequests() {
   try {
-    const res = await fetch(`${API}/view-requests`, {
-      headers: { Authorization: "Bearer " + token }
-    });
+    const res = await fetch(`${API}/view-requests`, { headers: { Authorization: "Bearer " + token } });
     const data = await res.json();
     const wrap = document.getElementById("reqList");
-
     if (!Array.isArray(data) || !data.length) return wrap.innerHTML = "No viewing requests yet.";
 
     wrap.innerHTML = data.map(r => {
       const id = getId(r);
       return `
       <div class="list-item">
-        <div>
-          <b>${r.name}</b> (${r.phone})<br>
-          House: ${r.houseTitle || r.house?.title || '—'}<br>
-          Date: ${r.date}
-        </div>
+        <div><b>${r.name}</b> (${r.phone})<br>House: ${r.houseTitle || '—'}<br>Date: ${r.date}</div>
         <div>
           <span class="status-tag">${r.status || "pending"}</span>
           ${r.status !== "approved" ? `<button class="btn-small green" onclick="approveRequest('${id}')">Approve</button>` : ""}
         </div>
-      </div>
-    `}).join("");
-  } catch (err) {
-    console.error("Error loading requests:", err);
-    document.getElementById("reqList").innerHTML = "Failed to load requests.";
+      </div>`;
+    }).join("");
+  } catch (err) { console.error(err); document.getElementById("reqList").innerHTML = "Failed to load requests."; }
+}
+
+// --- BOOKINGS WAITING FOR APPROVAL ---
+async function loadWaitingBookings() {
+  try {
+    const res = await fetch(`${API}/bookings`, { headers: { Authorization: "Bearer " + token } });
+    const data = await res.json();
+    const wrap = document.getElementById("reqList");
+    
+    // Get waiting bookings
+    const waitingBookings = data.filter(b => b.status === "waiting" || b.status === "pending");
+    
+    if (waitingBookings.length === 0) {
+      if (wrap.innerHTML.includes("No viewing requests")) {
+        wrap.innerHTML += "<br><br><h4>📖 Bookings Waiting for Approval:</h4><p>No bookings waiting for approval.</p>";
+      } else {
+        wrap.innerHTML += "<br><br><h4>📖 Bookings Waiting for Approval:</h4><p>No bookings waiting for approval.</p>";
+      }
+      return;
+    }
+
+    const bookingsHtml = waitingBookings.map(b => {
+      const id = getId(b);
+      return `
+      <div class="list-item" style="margin-top:10px;">
+        <div><b>${b.customerName}</b> (${b.customerPhone})<br>House: ${b.houseTitle}<br>Amount: KES ${Number(b.amount || 0).toLocaleString()}</div>
+        <div>
+          <span class="status-tag" style="background:#ff9800; color:white;">Waiting for Approval</span>
+          <button class="btn-small green" onclick="approveBooking('${id}')" style="margin-left:5px;">Approve</button>
+        </div>
+      </div>`;
+    }).join("");
+
+    if (wrap.innerHTML.includes("No viewing requests")) {
+      wrap.innerHTML = wrap.innerHTML.replace("No viewing requests yet.", "") + "<h4>📖 Bookings Waiting for Approval:</h4>" + bookingsHtml;
+    } else {
+      wrap.innerHTML += "<br><br><h4>📖 Bookings Waiting for Approval:</h4>" + bookingsHtml;
+    }
+  } catch (err) { 
+    console.error(err); 
   }
 }
 
 async function approveRequest(id) {
   if (!id) return alert('Invalid request id');
   try {
-    const res = await fetch(`${API}/view-requests/${id}/approve`, {
-      method: "POST",
-      headers: { Authorization: "Bearer " + token }
-    });
+    const res = await fetch(`${API}/view-requests/${id}/approve`, { method:"POST", headers:{ Authorization:"Bearer "+token } });
     const data = await res.json().catch(()=>({}));
     if (!res.ok) throw new Error(data.message || 'Approve failed');
     alert(data.message || 'Request approved');
     loadRequests();
-  } catch (err) {
-    alert("Failed to approve request: " + err.message);
-  }
+  } catch(err){ alert("Failed to approve request: "+err.message); }
 }
 
-// --- LOAD BOOKINGS ---
+async function approveBooking(id) {
+  if (!id) return alert('Invalid booking id');
+  if (!confirm("Approve this booking? The client will be able to proceed to payment.")) return;
+  try {
+    const res = await fetch(`${API}/bookings/${id}/approve`, { 
+      method:"POST", 
+      headers:{ Authorization:"Bearer "+token } 
+    });
+    const data = await res.json().catch(()=>({}));
+    if (!res.ok) throw new Error(data.message || 'Approve failed');
+    alert("✅ Booking approved! Client can now proceed to payment.");
+    loadRequests();
+    loadWaitingBookings();
+    loadBookings();
+  } catch(err){ alert("Failed to approve booking: "+err.message); }
+}
+
+// --- BOOKINGS ---
 async function loadBookings() {
   try {
-    const res = await fetch(`${API}/bookings`, {
-      headers: { Authorization: "Bearer " + token }
-    });
+    const res = await fetch(`${API}/bookings`, { headers:{ Authorization:"Bearer "+token } });
     const data = await res.json();
     const wrap = document.getElementById("booksList");
-
     if (!Array.isArray(data) || !data.length) return wrap.innerHTML = "No bookings yet.";
 
     wrap.innerHTML = data.map(b => {
       const id = getId(b);
       return `
       <div class="list-item">
-        <div>
-          <b>${b.customerName}</b> (${b.customerPhone})<br>
-          House: ${b.houseTitle}<br>
-          Amount: KES ${b.amount}
-        </div>
+        <div><b>${b.customerName}</b> (${b.customerPhone})<br>House: ${b.houseTitle}<br>Amount: KES ${b.amount}</div>
         <div>
           <span class="status-tag">${b.status}</span>
           ${b.status !== "approved" ? `<button class="btn-small green" onclick="approveBooking('${id}')">Approve</button>` : ""}
         </div>
-      </div>
-    `}).join("");
-  } catch (err) {
-    console.error("Error loading bookings:", err);
-    document.getElementById("booksList").innerHTML = "Failed to load bookings.";
-  }
-}
-
-async function approveBooking(id) {
-  if (!id) return alert('Invalid booking id');
-  try {
-    const res = await fetch(`${API}/bookings/${id}/approve`, {
-      method: "POST",
-      headers: { Authorization: "Bearer " + token }
-    });
-    const data = await res.json().catch(()=>({}));
-    if (!res.ok) throw new Error(data.message || 'Approve failed');
-    alert(data.message || 'Booking approved');
-    loadBookings();
-  } catch (err) {
-    alert("Failed to approve booking: " + err.message);
-  }
+      </div>`;
+    }).join("");
+  } catch(err){ console.error(err); document.getElementById("booksList").innerHTML="Failed to load bookings."; }
 }
 
 // --- LOGOUT ---
-document.getElementById("logoutBtn").addEventListener("click", () => {
+document.getElementById("logoutBtn").addEventListener("click", ()=>{
   localStorage.clear();
   alert("Logged out successfully!");
   location.href = "admin_login.html";
 });
 
+// --- DASHBOARD BACKGROUND MANAGEMENT ---
+document.getElementById("bgType").addEventListener("change", (e) => {
+  const type = e.target.value;
+  document.getElementById("gradientSettings").style.display = type === "gradient" ? "block" : "none";
+  document.getElementById("imageSettings").style.display = type === "image" ? "block" : "none";
+});
+
+// Load current background settings
+async function loadBackgroundSettings() {
+  try {
+    const res = await fetch(`${API}/dashboard-background`);
+    
+    if (!res.ok) {
+      console.error("Failed to load background settings:", res.status);
+      return;
+    }
+    
+    const settings = await res.json();
+    
+    if (settings && settings.type) {
+      document.getElementById("bgType").value = settings.type;
+      if (settings.gradient) {
+        document.getElementById("gradientColor1").value = settings.gradient.color1 || "#f5f6fa";
+        document.getElementById("gradientColor2").value = settings.gradient.color2 || "#ffffff";
+      }
+      if (settings.image) {
+        document.getElementById("bgImageUrl").value = settings.image;
+        document.getElementById("bgImagePreview").innerHTML = `<img src="${settings.image}" style="max-width:100%; max-height:150px; border-radius:6px; margin-top:5px;">`;
+      }
+      document.getElementById("bgType").dispatchEvent(new Event("change"));
+    }
+  } catch (err) {
+    console.error("Error loading background settings:", err);
+  }
+}
+
+// Preview image when file is selected
+document.getElementById("bgImageFile").addEventListener("change", async (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    try {
+      const cloudUrl = await uploadToCloudinary(file);
+      document.getElementById("bgImageUrl").value = cloudUrl;
+      document.getElementById("bgImagePreview").innerHTML = `<img src="${cloudUrl}" style="max-width:100%; max-height:150px; border-radius:6px; margin-top:5px;">`;
+    } catch (err) {
+      alert("Failed to upload image: " + err.message);
+    }
+  }
+});
+
+// Save background settings
+document.getElementById("saveBgBtn").addEventListener("click", async () => {
+  const type = document.getElementById("bgType").value;
+  let gradient = null;
+  let image = null;
+  
+  if (type === "gradient") {
+    gradient = {
+      color1: document.getElementById("gradientColor1").value,
+      color2: document.getElementById("gradientColor2").value
+    };
+  } else {
+    image = document.getElementById("bgImageUrl").value.trim();
+    if (!image) {
+      return alert("Please upload an image or enter an image URL");
+    }
+  }
+  
+  try {
+    const res = await fetch(`${API}/dashboard-background`, {
+      method: "POST",
+      headers: { 
+        Authorization: "Bearer " + token,
+        "Content-Type": "application/json" 
+      },
+      body: JSON.stringify({ type, gradient, image })
+    });
+    
+    if (!res.ok) {
+      const errorText = await res.text();
+      console.error("Server response:", errorText);
+      return alert("❌ Server error: " + res.status + ". Please check the console for details.");
+    }
+    
+    const data = await res.json();
+    if (data.success) {
+      alert("✅ Background settings saved successfully!");
+      loadBackgroundSettings();
+    } else {
+      alert("❌ Failed to save settings: " + (data.message || "Unknown error"));
+    }
+  } catch (err) {
+    console.error("Error saving settings:", err);
+    alert("❌ Error saving settings: " + err.message);
+  }
+});
+
+// --- SUPPORT NUMBERS MANAGEMENT ---
+async function loadSupportNumbers() {
+  try {
+    const res = await fetch(`${API}/support-numbers`, {
+      headers: { Authorization: "Bearer " + token }
+    });
+    
+    if (res.ok) {
+      const supportNumbers = await res.json();
+      document.getElementById("supportPhone1").value = supportNumbers.phone1 || "";
+      document.getElementById("supportPhone2").value = supportNumbers.phone2 || "";
+    }
+  } catch (err) {
+    console.error("Error loading support numbers:", err);
+  }
+}
+
+document.getElementById("saveSupportBtn").addEventListener("click", async () => {
+  const phone1 = document.getElementById("supportPhone1").value.trim();
+  const phone2 = document.getElementById("supportPhone2").value.trim();
+  
+  try {
+    const res = await fetch(`${API}/support-numbers`, {
+      method: "POST",
+      headers: { 
+        Authorization: "Bearer " + token,
+        "Content-Type": "application/json" 
+      },
+      body: JSON.stringify({ phone1, phone2 })
+    });
+    
+    if (!res.ok) {
+      const errorText = await res.text();
+      console.error("Server response:", errorText);
+      return alert("❌ Server error: " + res.status);
+    }
+    
+    const data = await res.json();
+    if (data.success) {
+      alert("✅ Support numbers saved successfully!");
+      loadSupportNumbers();
+    } else {
+      alert("❌ Failed to save: " + (data.message || "Unknown error"));
+    }
+  } catch (err) {
+    console.error("Error saving support numbers:", err);
+    alert("❌ Error saving support numbers: " + err.message);
+  }
+});
+
+// --- ADD ADMIN ---
+document.getElementById("addAdminForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  
+  const name = document.getElementById("adminName").value.trim();
+  const phone = document.getElementById("adminPhone").value.trim();
+  const password = document.getElementById("adminPassword").value.trim();
+  const passwordConfirm = document.getElementById("adminPasswordConfirm").value.trim();
+  
+  if (!name || !phone || !password || !passwordConfirm) {
+    return alert("⚠️ All fields are required");
+  }
+  
+  if (password !== passwordConfirm) {
+    return alert("❌ Passwords do not match");
+  }
+  
+  if (password.length < 4) {
+    return alert("⚠️ Password must be at least 4 characters long");
+  }
+  
+  try {
+    const res = await fetch(`${API}/signup`, {
+      method: "POST",
+      headers: { 
+        Authorization: "Bearer " + token,
+        "Content-Type": "application/json" 
+      },
+      body: JSON.stringify({ 
+        name, 
+        phone, 
+        pass: password, 
+        isAdmin: true 
+      })
+    });
+    
+    if (!res.ok) {
+      const errorText = await res.text();
+      console.error("Server response:", errorText);
+      return alert("❌ Server error: " + res.status);
+    }
+    
+    const data = await res.json();
+    
+    if (!data.success) {
+      return alert("❌ " + (data.message || "Failed to create admin account"));
+    }
+    
+    alert("✅ Admin account created successfully!");
+    document.getElementById("addAdminForm").reset();
+  } catch (err) {
+    console.error("Error creating admin:", err);
+    alert("❌ Error creating admin: " + err.message);
+  }
+});
+
 // --- INIT ---
 loadHouses();
 loadRequests();
+loadWaitingBookings();
 loadBookings();
+loadBackgroundSettings();
+loadSupportNumbers();
 </script>
 
 </body>

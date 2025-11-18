@@ -51,7 +51,11 @@
   </div>
 
   <script>
-  const API_BASE = "http://localhost:5000"; // Change to your Render URL if deployed
+  // ✅ Automatically detect backend (local or Render)
+  const API = location.hostname === "localhost"
+    ? "http://localhost:5000/api"
+    : "https://vacant-houses-backend-1.onrender.com/api";
+
   async function loginAdmin() {
     const phone = document.getElementById("phone").value.trim();
     const pass = document.getElementById("pass").value.trim();
@@ -61,7 +65,7 @@
     }
 
     try {
-      const res = await fetch(`${API_BASE}/api/admin/login`, {
+      const res = await fetch(`${API}/admin/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone, pass })
@@ -69,8 +73,8 @@
 
       const data = await res.json();
 
-      if (!data.success) {
-        return alert(data.message || "Login failed");
+      if (!res.ok || !data.success) {
+        return alert(data.message || "❌ Login failed. Invalid credentials.");
       }
 
       // ✅ Correctly store same keys used by dashboard
@@ -78,10 +82,11 @@
       localStorage.setItem("userData", JSON.stringify(data.user));
 
       alert("✅ Welcome Admin!");
+      // Force redirect
       window.location.href = "admin_dashboard.html";
     } catch (err) {
-      console.error(err);
-      alert("Server error. Please try again.");
+      console.error("Admin login error:", err);
+      alert("⚠️ Server error. Please check your connection and try again.");
     }
   }
   </script>

@@ -1,8 +1,5 @@
-// ======= API BASE =======
-const API =
-  location.hostname === "localhost"
-    ? "http://localhost:5000/api"
-    : "https://vacant-houses-backend-1.onrender.com/api";
+// Use Render backend API directly
+const API = "https://vacant-houses-backend-1.onrender.com/api";
 
 // --- ADMIN LOGIN ---
 document.getElementById("adminLogin")?.addEventListener("click", async () => {
@@ -13,7 +10,7 @@ document.getElementById("adminLogin")?.addEventListener("click", async () => {
     const res = await fetch(`${API}/admin/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ phone, password: pass }),
+      body: JSON.stringify({ phone, password: pass })
     });
 
     const data = await res.json();
@@ -42,10 +39,8 @@ document.getElementById("houseForm")?.addEventListener("submit", async (e) => {
   try {
     const res = await fetch(`${API}/houses`, {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("adminAuth")}`,
-      },
-      body: form,
+      headers: { Authorization: `Bearer ${localStorage.getItem("adminAuth")}` },
+      body: form
     });
 
     const data = await res.json();

@@ -23,8 +23,14 @@ phone.value = user?.phone || "";
 async function loadHouse() {
   const res = await fetch(`http://localhost:5000/api/houses/${id}`);
   const h = await res.json();
+  // Handle both Cloudinary URLs and local paths
+  let imageUrl = h.image || '';
+  if (imageUrl && !imageUrl.startsWith('http')) {
+    // Local path - prepend base URL
+    imageUrl = 'http://localhost:5000' + imageUrl;
+  }
   house.innerHTML = `
-    <img src="http://localhost:5000${h.image}" width="100%">
+    ${imageUrl ? `<img src="${imageUrl}" width="100%" onerror="this.style.display='none'">` : '<div style="width:100%;height:220px;background:#eee;display:flex;align-items:center;justify-content:center;color:#999;">No Image</div>'}
     <h2>${h.title}</h2>
     <p>${h.location}</p>
     <p>Kes ${h.price}</p>

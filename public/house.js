@@ -43,9 +43,16 @@ async function load() {
 
   const bookedForOthers = someoneElseHasBooked || pendingByOthers;
 
+  // Handle both Cloudinary URLs and local paths
+  let imageUrl = house.image || '';
+  if (imageUrl && !imageUrl.startsWith('http')) {
+    // Local path - prepend base URL
+    imageUrl = API.replace('/api','') + imageUrl;
+  }
+
   // render
   content.innerHTML = `
-    <img src="http://localhost:5000${house.image}" class="house-img">
+    ${imageUrl ? `<img src="${imageUrl}" class="house-img" onerror="this.style.display='none'">` : '<div style="width:100%;height:220px;background:#eee;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#999;">No Image</div>'}
     <h2 style="margin:8px 0;">${house.title}</h2>
     <div class="muted">${house.location} • KES ${Number(house.price).toLocaleString()}</div>
     <p style="margin-top:10px">${house.description || ""}</p>
